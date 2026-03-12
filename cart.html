@@ -1,1 +1,124 @@
+<!DOCTYPE html>
 
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart — Luminary Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-cart">
+
+<div id="page-loader"><div class="loader-logo">LUMINARY</div><div class="loader-bar"></div></div>
+<div id="toast-container"></div>
+
+<nav class="navbar scrolled" role="navigation">
+  <a href="index.html" class="nav-logo">LUMINARY <span>Books</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button id="theme-toggle" class="nav-btn" aria-label="Toggle theme"><i class="fas fa-sun"></i></button>
+    <a href="cart.html" class="nav-btn" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-badge">0</span></a>
+    <button id="mobile-toggle" class="nav-btn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="page-banner">
+  <h1 class="reveal">Shopping Cart</h1>
+  <nav class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Cart</span></nav>
+</div>
+
+<section class="section">
+  <div class="container">
+
+```
+<!-- Empty Cart State -->
+<div id="cart-empty" class="cart-empty">
+  <i class="fas fa-shopping-bag"></i>
+  <h2>Your cart is empty</h2>
+  <p>Looks like you haven't added any books yet.</p>
+  <a href="shop.html" class="btn-primary"><i class="fas fa-book-open"></i> Browse Books</a>
+</div>
+
+<!-- Cart Content -->
+<div class="cart-layout" id="cart-summary">
+  <div>
+    <div class="cart-items-container" id="cart-items" role="list" aria-label="Cart items"></div>
+    <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+      <a href="shop.html" class="btn-secondary"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
+    </div>
+  </div>
+
+  <!-- Order Summary -->
+  <div class="cart-summary" aria-label="Order summary">
+    <h2 class="summary-title">Order Summary</h2>
+    <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal">$0.00</span></div>
+    <div class="summary-row"><span>Shipping</span><span id="cart-shipping">—</span></div>
+    <div class="summary-row total"><span>Total</span><span id="cart-total">$0.00</span></div>
+
+    <div class="coupon-row">
+      <input type="text" id="coupon-input" class="coupon-input" placeholder="Coupon code" aria-label="Enter coupon code">
+      <button id="apply-coupon" class="btn-coupon">Apply</button>
+    </div>
+    <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px">Try: <em style="color:var(--gold)">LUMINARY20</em></p>
+
+    <a href="checkout.html" class="btn-primary cart-checkout-btn" style="display:flex;text-align:center;justify-content:center">
+      <i class="fas fa-lock"></i> Proceed to Checkout
+    </a>
+
+    <div class="free-shipping">
+      <i class="fas fa-truck-fast"></i> Free shipping on orders over $35
+    </div>
+
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:center">
+      <i class="fab fa-cc-visa" style="font-size:1.8rem;color:var(--text-muted)"></i>
+      <i class="fab fa-cc-mastercard" style="font-size:1.8rem;color:var(--text-muted)"></i>
+      <i class="fab fa-cc-paypal" style="font-size:1.8rem;color:var(--text-muted)"></i>
+      <i class="fab fa-cc-apple-pay" style="font-size:1.8rem;color:var(--text-muted)"></i>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- You might also like -->
+
+<section class="section" style="background:var(--bg-secondary)">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Recommendations</span>
+      <h2 class="section-title">You Might Also Like</h2>
+      <div class="gold-line"></div>
+    </div>
+    <div class="books-grid" id="cart-recommendations"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom"><p>&copy; 2025 Luminary Books.</p><a href="shop.html" class="btn-ghost">Continue Shopping <i class="fas fa-arrow-right"></i></a></div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+
+<script src="script.js"></script>
+
+<script>
+// Render some book recommendations in cart page
+document.addEventListener('DOMContentLoaded', () => {
+  const recGrid = document.getElementById('cart-recommendations');
+  if (recGrid) {
+    recGrid.innerHTML = BOOKS.slice(0, 4).map(b => renderBookCard(b)).join('');
+    ScrollReveal.init();
+  }
+});
+</script>
+
+</body>
+</html>
