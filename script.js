@@ -533,4 +533,626 @@ function renderBookCard(book, opts = {}) {
   const discount = book.originalPrice ? Math.round((1 - book.price / book.originalPrice) * 100) : 0;
   const stars = renderStars(book.rating);
   const inWishlist = Wishlist.has(book.id);
-  const lowStock 
+  const lowStock  = book.stock <= 5;
+  return `
+    <article class="book-card reveal" data-id="${book.id}" data-category="${book.category}" data-price="${book.price}" data-rating="${book.rating}" data-year="${book.year}">
+      <div class="book-card-image">
+        <img src="${book.cover}" alt="${book.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x300/1a1a2e/d4af37?text=Book'">
+        ${book.badge ? `<span class="book-badge badge-${book.badge.toLowerCase().replace(/\s+/g,'-')}">${book.badge}</span>` : ''}
+        ${discount > 0 ? `<span class="book-discount">-${discount}%</span>` : ''}
+        <div class="book-card-overlay">
+          <button class="btn-quick-view" data-id="${book.id}" aria-label="Quick view ${book.title}"><i class="fas fa-eye"></i> Quick View</button>
+        </div>
+      </div>
+      <div class="book-card-body">
+        <span class="book-category">${book.category}</span>
+        <h3 class="book-title"><a href="product.html?id=${book.id}">${book.title}</a></h3>
+        <p class="book-author">by ${book.author}</p>
+        <div class="book-rating">${stars}<span class="rating-count">(${book.reviews.toLocaleString()})</span></div>
+        ${lowStock ? `<p class="low-stock"><i class="fas fa-fire"></i> Only ${book.stock} left!</p>` : ''}
+        <div class="book-price-row">
+          <div class="book-price">
+            <span class="price-current">$${book.price.toFixed(2)}</span>
+            ${book.originalPrice ? `<span class="price-original">$${book.originalPrice.toFixed(2)}</span>` : ''}
+          </div>
+          <div class="book-actions">
+            <button class="btn-wishlist ${inWishlist ? 'active' : ''}" data-wishlist-id="${book.id}" aria-label="Add to wishlist">
+              <i class="${inWishlist ? 'fas' : 'far'} fa-heart"></i>
+            </button>
+            <button class="btn-add-cart" data-cart-id="${book.id}" aria-label="Add to cart">
+              <i class="fas fa-shopping-bag"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderStars(rating) {
+  let html = '';
+  for (let i = 1; i <= 5; i++) {
+    if (i <= Math.floor(rating)) html += '<i class="fas fa-star"></i>';
+    else if (i - rating < 1) html += '<i class="fas fa-star-half-alt"></i>';
+    else html += '<i class="far fa-star"></i>';
+  }
+  return `<span class="stars">${html}</span><span class="rating-num">${rating}</span>`;
+}
+
+// ============================================================
+// QUICK VIEW MODAL
+// ============================================================
+const Modal = {
+  open(bookId) {
+    const book = BOOKS.find(b => b.id === bookId);
+    if (!book) return;
+    const discount = book.originalPrice ? Math.round((1 - book.price / book.originalPrice) * 100) : 0;
+    const modal = document.getElementById('quick-view-modal');
+    if (!modal) return;
+    modal.querySelector('.modal-body').innerHTML = `
+      <div class="modal-book">
+        <div class="modal-book-img">
+          <img src="${book.cover}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/200x300/1a1a2e/d4af37?text=Book'">
+          ${discount > 0 ? `<span class="book-discount">-${discount}%</span>` : ''}
+        </div>
+        <div class="modal-book-info">
+          <span class="book-category">${book.category}</span>
+          <h2>${book.title}</h2>
+          <p class="book-author">by <strong>${book.author}</strong></p>
+          <div class="book-rating">${renderStars(book.rating)}<span class="rating-count">(${book.reviews.toLocaleString()} reviews)</span></div>
+          <div class="modal-price">
+            <span class="price-current">$${book.price.toFixed(2)}</span>
+            ${book.originalPrice ? `<span class="price-original">$${book.originalPrice.toFixed(2)}</span>` : ''}
+          </div>
+          <p class="modal-desc">${book.description}</p>
+          ${book.stock <= 5 ? `<p class="low-stock"><i class="fas fa-fire"></i> Only ${book.stock} left in stock!</p>` : ''}
+          <div class="modal-actions">
+            <div class="qty-selector">
+              <button class="qty-btn" data-action="minus">−</button>
+              <input type="number" class="qty-input" value="1" min="1" max="${book.stock}">
+              <button class="qty-btn" data-action="plus">+</button>
+            </div>
+            <button class="btn-primary btn-add-to-cart" data-cart-id="${book.id}"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          </div>
+          <a href="product.html?id=${book.id}" class="btn-view-full">View Full Details <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    `;
+    // Qty logic
+    const qtyInput = modal.querySelector('.qty-input');
+    modal.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        let val = parseInt(qtyInput.value) || 1;
+        if (btn.dataset.action === 'plus') val = Math.min(val + 1, book.stock);
+        else val = Math.max(val - 1, 1);
+        qtyInput.value = val;
+      });
+    });
+    modal.querySelector('.btn-add-to-cart')?.addEventListener('click', () => {
+      Cart.add(book.id, parseInt(qtyInput.value) || 1);
+    });
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  },
+  close() {
+    const modal = document.getElementById('quick-view-modal');
+    modal?.classList.remove('active');
+    document.body.style.overflow = '';
+  },
+  init() {
+    const modal = document.getElementById('quick-view-modal');
+    if (!modal) return;
+    modal.addEventListener('click', e => { if (e.target === modal) this.close(); });
+    modal.querySelector('.modal-close')?.addEventListener('click', () => this.close());
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') this.close(); });
+  }
+};
+
+// ============================================================
+// GLOBAL EVENT DELEGATION
+// ============================================================
+function initGlobalEvents() {
+  document.addEventListener('click', e => {
+    // Add to cart
+    const cartBtn = e.target.closest('[data-cart-id]');
+    if (cartBtn && !cartBtn.classList.contains('btn-add-to-cart')) {
+      Cart.add(parseInt(cartBtn.dataset.cartId));
+      cartBtn.classList.add('added');
+      setTimeout(() => cartBtn.classList.remove('added'), 800);
+    }
+    // Wishlist
+    const wishBtn = e.target.closest('[data-wishlist-id]');
+    if (wishBtn) {
+      Wishlist.toggle(parseInt(wishBtn.dataset.wishlistId));
+    }
+    // Quick view
+    const qvBtn = e.target.closest('.btn-quick-view');
+    if (qvBtn) {
+      Modal.open(parseInt(qvBtn.dataset.id));
+    }
+  });
+}
+
+// ============================================================
+// NEWSLETTER
+// ============================================================
+function initNewsletter() {
+  const form = document.querySelector('.newsletter-form');
+  form?.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = form.querySelector('input[type="email"]').value;
+    if (!email) return;
+    Toast.show('Thank you for subscribing!', 'success');
+    form.reset();
+  });
+}
+
+// ============================================================
+// FAQ ACCORDION
+// ============================================================
+function initFAQ() {
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-question')?.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+}
+
+// ============================================================
+// LOADING SCREEN
+// ============================================================
+function initLoader() {
+  const loader = document.getElementById('page-loader');
+  if (!loader) return;
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      loader.classList.add('hidden');
+      setTimeout(() => loader.remove(), 600);
+    }, 800);
+  });
+}
+
+// ============================================================
+// HOME PAGE — Featured Books
+// ============================================================
+function initHomePage() {
+  if (!document.body.classList.contains('page-home')) return;
+
+  // Featured books (first 6)
+  const featuredGrid = document.getElementById('featured-books');
+  if (featuredGrid) {
+    featuredGrid.innerHTML = BOOKS.slice(0, 6).map(b => renderBookCard(b)).join('');
+  }
+
+  // Bestsellers carousel
+  const carousel = document.getElementById('bestsellers-track');
+  if (carousel) {
+    const sorted = [...BOOKS].sort((a, b) => b.reviews - a.reviews).slice(0, 8);
+    carousel.innerHTML = sorted.map(b => renderBookCard(b)).join('');
+    initCarousel();
+  }
+
+  HeroSlider.init();
+  Countdown.init();
+  ScrollReveal.init();
+}
+
+function initCarousel() {
+  const track = document.getElementById('bestsellers-track');
+  const prevBtn = document.getElementById('carousel-prev');
+  const nextBtn = document.getElementById('carousel-next');
+  if (!track) return;
+
+  let idx = 0;
+  const getVisible = () => window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3;
+
+  function slide(dir) {
+    const cards = track.children;
+    const visible = getVisible();
+    const max = cards.length - visible;
+    idx = Math.max(0, Math.min(idx + dir, max));
+    const cardW = cards[0]?.offsetWidth + 24 || 280;
+    track.style.transform = `translateX(-${idx * cardW}px)`;
+  }
+
+  prevBtn?.addEventListener('click', () => slide(-1));
+  nextBtn?.addEventListener('click', () => slide(1));
+
+  // Auto slide
+  let autoSlide = setInterval(() => slide(1), 3500);
+  track.parentElement?.addEventListener('mouseenter', () => clearInterval(autoSlide));
+  track.parentElement?.addEventListener('mouseleave', () => {
+    autoSlide = setInterval(() => {
+      const visible = getVisible();
+      if (idx >= track.children.length - visible) idx = -1;
+      slide(1);
+    }, 3500);
+  });
+}
+
+// ============================================================
+// SHOP PAGE
+// ============================================================
+function initShopPage() {
+  if (!document.body.classList.contains('page-shop')) return;
+
+  let filteredBooks = [...BOOKS];
+  let currentPage = 1;
+  const PER_PAGE = 8;
+
+  const grid = document.getElementById('shop-grid');
+  const searchInput = document.getElementById('search-input');
+  const categoryFilter = document.getElementById('filter-category');
+  const ratingFilter = document.getElementById('filter-rating');
+  const priceMin = document.getElementById('price-min');
+  const priceMax = document.getElementById('price-max');
+  const priceMinVal = document.getElementById('price-min-val');
+  const priceMaxVal = document.getElementById('price-max-val');
+  const sortSelect = document.getElementById('sort-select');
+  const resultCount = document.getElementById('result-count');
+  const pagination = document.getElementById('pagination');
+
+  // Populate categories
+  if (categoryFilter) {
+    const cats = [...new Set(BOOKS.map(b => b.category))];
+    cats.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat; opt.textContent = cat;
+      categoryFilter.appendChild(opt);
+    });
+  }
+
+  function applyFilters() {
+    const search = searchInput?.value.toLowerCase() || '';
+    const category = categoryFilter?.value || '';
+    const rating = parseFloat(ratingFilter?.value || '0');
+    const minP = parseFloat(priceMin?.value || '0');
+    const maxP = parseFloat(priceMax?.value || '9999');
+    const sort = sortSelect?.value || 'default';
+
+    filteredBooks = BOOKS.filter(b => {
+      const matchSearch = !search || b.title.toLowerCase().includes(search) || b.author.toLowerCase().includes(search);
+      const matchCat = !category || b.category === category;
+      const matchRating = b.rating >= rating;
+      const matchPrice = b.price >= minP && b.price <= maxP;
+      return matchSearch && matchCat && matchRating && matchPrice;
+    });
+
+    if (sort === 'price-asc') filteredBooks.sort((a, b) => a.price - b.price);
+    else if (sort === 'price-desc') filteredBooks.sort((a, b) => b.price - a.price);
+    else if (sort === 'newest') filteredBooks.sort((a, b) => b.year - a.year);
+    else if (sort === 'rating') filteredBooks.sort((a, b) => b.rating - a.rating);
+
+    currentPage = 1;
+    renderGrid();
+  }
+
+  function renderGrid() {
+    if (!grid) return;
+    const start = (currentPage - 1) * PER_PAGE;
+    const page = filteredBooks.slice(start, start + PER_PAGE);
+
+    if (resultCount) resultCount.textContent = `${filteredBooks.length} books found`;
+
+    if (page.length === 0) {
+      grid.innerHTML = '<div class="no-results"><i class="fas fa-search"></i><p>No books found. Try different filters.</p></div>';
+    } else {
+      grid.innerHTML = page.map(b => renderBookCard(b)).join('');
+      ScrollReveal.init();
+    }
+
+    renderPagination();
+  }
+
+  function renderPagination() {
+    if (!pagination) return;
+    const total = Math.ceil(filteredBooks.length / PER_PAGE);
+    if (total <= 1) { pagination.innerHTML = ''; return; }
+    let html = '';
+    for (let i = 1; i <= total; i++) {
+      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+    }
+    pagination.innerHTML = html;
+    pagination.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentPage = parseInt(btn.dataset.page);
+        renderGrid();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  }
+
+  // Price range
+  if (priceMin && priceMax) {
+    const updatePriceDisplay = () => {
+      if (priceMinVal) priceMinVal.textContent = `$${priceMin.value}`;
+      if (priceMaxVal) priceMaxVal.textContent = `$${priceMax.value}`;
+      applyFilters();
+    };
+    priceMin.addEventListener('input', updatePriceDisplay);
+    priceMax.addEventListener('input', updatePriceDisplay);
+  }
+
+  searchInput?.addEventListener('input', applyFilters);
+  categoryFilter?.addEventListener('change', applyFilters);
+  ratingFilter?.addEventListener('change', applyFilters);
+  sortSelect?.addEventListener('change', applyFilters);
+
+  document.getElementById('reset-filters')?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    if (categoryFilter) categoryFilter.value = '';
+    if (ratingFilter) ratingFilter.value = '0';
+    if (priceMin) priceMin.value = priceMin.min;
+    if (priceMax) priceMax.value = priceMax.max;
+    applyFilters();
+  });
+
+  applyFilters();
+}
+
+// ============================================================
+// PRODUCT DETAIL PAGE
+// ============================================================
+function initProductPage() {
+  if (!document.body.classList.contains('page-product')) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id'));
+  const book = BOOKS.find(b => b.id === id) || BOOKS[0];
+  const discount = book.originalPrice ? Math.round((1 - book.price / book.originalPrice) * 100) : 0;
+
+  // Populate product details
+  const titleEl = document.getElementById('product-title');
+  const authorEl = document.getElementById('product-author');
+  const ratingEl = document.getElementById('product-rating');
+  const priceEl = document.getElementById('product-price');
+  const descEl = document.getElementById('product-desc');
+  const imgEl = document.getElementById('product-image');
+  const badgeEl = document.getElementById('product-badge');
+  const stockEl = document.getElementById('product-stock');
+  const isbnEl = document.getElementById('product-isbn');
+  const yearEl = document.getElementById('product-year');
+  const catEl = document.getElementById('product-category');
+
+  if (titleEl) titleEl.textContent = book.title;
+  if (authorEl) authorEl.textContent = `by ${book.author}`;
+  if (ratingEl) ratingEl.innerHTML = renderStars(book.rating) + `<span class="rating-count">(${book.reviews.toLocaleString()} reviews)</span>`;
+  if (priceEl) priceEl.innerHTML = `<span class="price-current">$${book.price.toFixed(2)}</span>${book.originalPrice ? `<span class="price-original">$${book.originalPrice.toFixed(2)}</span>` : ''}${discount > 0 ? `<span class="discount-badge">-${discount}% OFF</span>` : ''}`;
+  if (descEl) descEl.textContent = book.description;
+  if (imgEl) { imgEl.src = book.cover; imgEl.alt = book.title; }
+  if (badgeEl && book.badge) { badgeEl.textContent = book.badge; badgeEl.style.display = 'inline'; }
+  if (stockEl) stockEl.innerHTML = book.stock <= 5 ? `<i class="fas fa-fire"></i> Only ${book.stock} left!` : `<i class="fas fa-check-circle"></i> In Stock (${book.stock} available)`;
+  if (isbnEl) isbnEl.textContent = book.isbn;
+  if (yearEl) yearEl.textContent = book.year;
+  if (catEl) catEl.textContent = book.category;
+
+  document.title = `${book.title} — Luminary Books`;
+
+  // Qty
+  const qtyInput = document.getElementById('qty-input');
+  document.querySelectorAll('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      let val = parseInt(qtyInput?.value || 1);
+      if (btn.dataset.action === 'plus') val = Math.min(val + 1, book.stock);
+      else val = Math.max(val - 1, 1);
+      if (qtyInput) qtyInput.value = val;
+    });
+  });
+
+  document.getElementById('add-to-cart-main')?.addEventListener('click', () => {
+    Cart.add(book.id, parseInt(qtyInput?.value || 1));
+  });
+
+  document.getElementById('wishlist-main')?.addEventListener('click', function() {
+    Wishlist.toggle(book.id);
+    this.dataset.wishlistId = book.id;
+    Wishlist.updateButtons();
+  });
+
+  // Related books
+  const relGrid = document.getElementById('related-books');
+  if (relGrid) {
+    const related = BOOKS.filter(b => b.id !== book.id && b.category === book.category).slice(0, 4);
+    relGrid.innerHTML = (related.length ? related : BOOKS.filter(b => b.id !== book.id).slice(0, 4)).map(b => renderBookCard(b)).join('');
+  }
+
+  // Sample reviews
+  const reviews = [
+    { name: "Sarah M.", rating: 5, text: "Absolutely captivating! Couldn't put it down. A must-read for everyone.", date: "Jan 2025" },
+    { name: "James K.", rating: 4, text: "Beautiful writing, thought-provoking themes. Highly recommend!", date: "Dec 2024" },
+    { name: "Emily R.", rating: 5, text: "One of the best books I've ever read. Emotional and brilliant.", date: "Nov 2024" }
+  ];
+  const reviewList = document.getElementById('review-list');
+  if (reviewList) {
+    reviewList.innerHTML = reviews.map(r => `
+      <div class="review-item reveal">
+        <div class="review-header">
+          <div class="review-avatar">${r.name.charAt(0)}</div>
+          <div><strong>${r.name}</strong><span class="review-date">${r.date}</span></div>
+          <div class="stars">${'<i class="fas fa-star"></i>'.repeat(r.rating)}</div>
+        </div>
+        <p>${r.text}</p>
+      </div>
+    `).join('');
+  }
+
+  ScrollReveal.init();
+}
+
+// ============================================================
+// CART PAGE
+// ============================================================
+function initCartPage() {
+  if (!document.body.classList.contains('page-cart')) return;
+  renderCartPage();
+}
+
+function renderCartPage() {
+  const cart = Cart.get();
+  const container = document.getElementById('cart-items');
+  const subtotalEl = document.getElementById('cart-subtotal');
+  const totalEl = document.getElementById('cart-total');
+  const shippingEl = document.getElementById('cart-shipping');
+  const emptyEl = document.getElementById('cart-empty');
+  const summaryEl = document.getElementById('cart-summary');
+
+  if (!container) return;
+
+  if (cart.length === 0) {
+    if (emptyEl) emptyEl.style.display = 'flex';
+    if (summaryEl) summaryEl.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (summaryEl) summaryEl.style.display = 'block';
+
+  container.innerHTML = cart.map(item => {
+    const book = BOOKS.find(b => b.id === item.id);
+    if (!book) return '';
+    return `
+      <div class="cart-item" data-cart-item="${book.id}">
+        <img src="${book.cover}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/80x120/1a1a2e/d4af37?text=Book'">
+        <div class="cart-item-info">
+          <h4><a href="product.html?id=${book.id}">${book.title}</a></h4>
+          <p>by ${book.author}</p>
+          <span class="cart-item-cat">${book.category}</span>
+        </div>
+        <div class="cart-item-qty">
+          <button class="qty-btn" data-action="minus" data-id="${book.id}">−</button>
+          <span class="qty-display">${item.qty}</span>
+          <button class="qty-btn" data-action="plus" data-id="${book.id}">+</button>
+        </div>
+        <div class="cart-item-price">$${(book.price * item.qty).toFixed(2)}</div>
+        <button class="cart-item-remove" data-remove="${book.id}" aria-label="Remove ${book.title}"><i class="fas fa-times"></i></button>
+      </div>
+    `;
+  }).join('');
+
+  // Events
+  container.querySelectorAll('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = parseInt(btn.dataset.id);
+      const item = Cart.get().find(i => i.id === id);
+      const book = BOOKS.find(b => b.id === id);
+      if (!item || !book) return;
+      let qty = item.qty;
+      if (btn.dataset.action === 'plus') qty = Math.min(qty + 1, book.stock);
+      else qty = qty - 1;
+      Cart.update(id, qty);
+      renderCartPage();
+    });
+  });
+
+  container.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      Cart.remove(parseInt(btn.dataset.remove));
+      renderCartPage();
+      Toast.show('Item removed from cart', 'info');
+    });
+  });
+
+  // Totals
+  const subtotal = Cart.total();
+  const shipping = subtotal > 35 ? 0 : 4.99;
+  if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+  if (shippingEl) shippingEl.textContent = shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`;
+  if (totalEl) totalEl.textContent = `$${(subtotal + shipping).toFixed(2)}`;
+
+  // Coupon
+  document.getElementById('apply-coupon')?.addEventListener('click', () => {
+    const code = document.getElementById('coupon-input')?.value.trim().toUpperCase();
+    if (code === 'LUMINARY20') Toast.show('Coupon applied! 20% off', 'success');
+    else Toast.show('Invalid coupon code', 'error');
+  });
+}
+
+// ============================================================
+// CHECKOUT PAGE
+// ============================================================
+function initCheckoutPage() {
+  if (!document.body.classList.contains('page-checkout')) return;
+
+  // Render order summary
+  const cart = Cart.get();
+  const orderList = document.getElementById('order-items');
+  if (orderList) {
+    orderList.innerHTML = cart.map(item => {
+      const book = BOOKS.find(b => b.id === item.id);
+      if (!book) return '';
+      return `<div class="order-item"><span>${book.title} × ${item.qty}</span><span>$${(book.price * item.qty).toFixed(2)}</span></div>`;
+    }).join('');
+  }
+
+  const subtotal = Cart.total();
+  const shipping = subtotal > 35 ? 0 : 4.99;
+  const total = subtotal + shipping;
+  const orderTotal = document.getElementById('order-total');
+  const orderSubtotal = document.getElementById('order-subtotal');
+  const orderShipping = document.getElementById('order-shipping');
+  if (orderSubtotal) orderSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+  if (orderShipping) orderShipping.textContent = shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`;
+  if (orderTotal) orderTotal.textContent = `$${total.toFixed(2)}`;
+
+  // Payment tabs
+  document.querySelectorAll('.payment-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.payment-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab)?.classList.add('active');
+    });
+  });
+
+  // Form validation & submit
+  const form = document.getElementById('checkout-form');
+  form?.addEventListener('submit', e => {
+    e.preventDefault();
+    let valid = true;
+    form.querySelectorAll('[required]').forEach(field => {
+      if (!field.value.trim()) {
+        field.classList.add('error');
+        valid = false;
+      } else {
+        field.classList.remove('error');
+      }
+    });
+    if (!valid) { Toast.show('Please fill in all required fields', 'error'); return; }
+    // Show success modal
+    document.getElementById('order-success-modal')?.classList.add('active');
+    Cart.clear();
+  });
+
+  form?.querySelectorAll('[required]').forEach(field => {
+    field.addEventListener('input', () => field.classList.remove('error'));
+  });
+
+  document.getElementById('success-close')?.addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+}
+
+// ============================================================
+// INIT — Run on DOM ready
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initLoader();
+  ThemeToggle.init();
+  Navbar.init();
+  BackToTop.init();
+  Modal.init();
+  initGlobalEvents();
+  initNewsletter();
+  initFAQ();
+  Cart.updateBadge();
+  Wishlist.updateButtons();
+
+  initHomePage();
+  initShopPage();
+  initProductPage();
+  initCartPage();
+  initCheckoutPage();
+});
