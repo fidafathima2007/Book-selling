@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Detail — Luminary Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-product">
+
+<div id="page-loader"><div class="loader-logo">LUMINARY</div><div class="loader-bar"></div></div>
+<div id="quick-view-modal" role="dialog" aria-modal="true" aria-label="Quick view">
+  <div class="modal-inner"><button class="modal-close" aria-label="Close"><i class="fas fa-times"></i></button><div class="modal-body"></div></div>
+</div>
+<div id="toast-container"></div>
+
+<nav class="navbar scrolled" role="navigation">
+  <a href="index.html" class="nav-logo">LUMINARY <span>Books</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html" class="active">Shop</a></li>
+    <li><a href="shop.html?cat=Fiction">Fiction</a></li>
+    <li><a href="shop.html?cat=Non-Fiction">Non-Fiction</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button id="theme-toggle" class="nav-btn" aria-label="Toggle theme"><i class="fas fa-sun"></i></button>
+    <a href="cart.html" class="nav-btn" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-badge">0</span></a>
+    <button id="mobile-toggle" class="nav-btn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- Page Banner -->
+
+<div class="page-banner">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><a href="shop.html">Shop</a><span>/</span><span id="product-title-crumb">Book Detail</span></nav>
+</div>
+
+<!-- Product Section -->
+
+<section class="section">
+  <div class="container">
+    <div class="product-layout">
+
+```
+  <!-- Book Image -->
+  <div>
+    <div class="product-image-main reveal">
+      <img id="product-image" src="" alt="Book cover" loading="eager">
+    </div>
+  </div>
+
+  <!-- Book Info -->
+  <div class="reveal">
+    <div class="product-badges">
+      <span id="product-badge" class="book-badge badge-bestseller" style="display:none"></span>
+    </div>
+    <span id="product-category" style="font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Category</span>
+    <h1 class="product-info-title" id="product-title">Loading...</h1>
+    <p id="product-author" style="color:var(--text-secondary);font-size:1rem;margin-bottom:12px"></p>
+    <div id="product-rating" class="book-rating" aria-label="Book rating"></div>
+
+    <div id="product-price" class="product-price"></div>
+
+    <div id="product-stock" style="font-size:0.9rem;margin-bottom:16px"></div>
+
+    <p id="product-desc" style="color:var(--text-secondary);line-height:1.8;margin-bottom:24px;font-size:0.95rem"></p>
+
+    <div class="product-meta">
+      <div class="product-meta-row"><strong>ISBN:</strong> <span id="product-isbn"></span></div>
+      <div class="product-meta-row"><strong>Year:</strong> <span id="product-year"></span></div>
+      <div class="product-meta-row"><strong>Genre:</strong> <span id="product-category-meta" id="product-category"></span></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="product-actions">
+      <div class="qty-selector" role="group" aria-label="Quantity">
+        <button class="qty-btn" data-action="minus" aria-label="Decrease quantity">−</button>
+        <input type="number" class="qty-input" id="qty-input" value="1" min="1" max="99" aria-label="Quantity">
+        <button class="qty-btn" data-action="plus" aria-label="Increase quantity">+</button>
+      </div>
+      <button id="add-to-cart-main" class="btn-primary"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+      <button id="wishlist-main" class="btn-secondary" data-wishlist-id="" aria-label="Add to wishlist">
+        <i class="far fa-heart"></i>
+      </button>
+    </div>
+
+    <!-- Trust badges -->
+    <div style="display:flex;gap:20px;margin-top:20px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-muted)"><i class="fas fa-truck-fast" style="color:var(--gold)"></i> Free shipping over $35</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-muted)"><i class="fas fa-rotate-left" style="color:var(--gold)"></i> 30-day returns</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-muted)"><i class="fas fa-shield-halved" style="color:var(--gold)"></i> Secure checkout</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Tabs: Description / Reviews -->
+<div class="product-tabs reveal" style="margin-top:60px">
+  <div class="tab-nav" role="tablist">
+    <button class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab(this,'tab-reviews')">Customer Reviews</button>
+    <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab(this,'tab-info')">Book Details</button>
+  </div>
+  <div id="tab-reviews">
+    <div id="review-list"></div>
+  </div>
+  <div id="tab-info" style="display:none">
+    <p style="color:var(--text-secondary);line-height:1.8">This beautifully crafted book is printed on high-quality acid-free paper, ensuring your copy lasts for generations. Comes with a dust jacket. Perfect as a gift or for your personal library.</p>
+    <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+        <strong style="font-size:0.8rem;color:var(--gold)">FORMAT</strong><p style="margin-top:6px">Hardcover / Paperback</p>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+        <strong style="font-size:0.8rem;color:var(--gold)">LANGUAGE</strong><p style="margin-top:6px">English</p>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+        <strong style="font-size:0.8rem;color:var(--gold)">PAGES</strong><p style="margin-top:6px">320–480 pages</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Related Books -->
+<div style="margin-top:80px">
+  <div class="section-header reveal">
+    <span class="section-tag">Explore More</span>
+    <h2 class="section-title">You May Also Like</h2>
+    <div class="gold-line"></div>
+  </div>
+  <div class="books-grid" id="related-books"></div>
+</div>
+```
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom"><p>&copy; 2025 Luminary Books. All rights reserved.</p><a href="shop.html" class="btn-ghost">Continue Shopping <i class="fas fa-arrow-right"></i></a></div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+
+<script src="script.js"></script>
+
+<script>
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+  document.querySelectorAll('.product-tabs [id^="tab-"]').forEach(t => t.style.display = 'none');
+  btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+  document.getElementById(tabId).style.display = 'block';
+}
+</script>
+
+</body>
+</html>
