@@ -991,4 +991,5 @@ input[type="range"]::-webkit-slider-thumb {
   .section { padding: 60px 5%; }
   .books-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .categories-grid { grid-template-columns: repeat(3, 1fr); }
+
 }
