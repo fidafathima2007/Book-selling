@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Luminary Books — Premium curated books for curious minds. Bestsellers, award winners, and hidden gems delivered to your door.">
+  <title>— Book verse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-home">
+
+<!-- ════════════════════════════════════════
+     LOADING SCREEN
+════════════════════════════════════════ -->
+<div id="page-loader">
+  <div class="loader-logo">Book verse</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     QUICK VIEW MODAL
+════════════════════════════════════════ -->
+<div id="quick-view-modal" role="dialog" aria-modal="true" aria-label="Book quick view">
+  <div class="modal-inner">
+    <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<!-- ════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════ -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo">Book verse <span>Books</span></a>
+  <ul class="nav-links" role="list">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="shop.html?cat=Fiction">Fiction</a></li>
+    <li><a href="shop.html?cat=Non-Fiction">Non-Fiction</a></li>
+    <li><a href="shop.html?cat=Sci-Fi">Sci-Fi</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button id="theme-toggle" class="nav-btn" aria-label="Toggle dark/light mode"><i class="fas fa-sun"></i></button>
+    <a href="shop.html" class="nav-btn" aria-label="Search"><i class="fas fa-search"></i></a>
+    <a href="cart.html" class="nav-btn" aria-label="Shopping cart">
+      <i class="fas fa-shopping-bag"></i>
+      <span class="cart-badge" aria-live="polite">0</span>
+    </a>
+    <button id="mobile-toggle" class="nav-btn" aria-label="Toggle mobile menu"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     HERO SECTION
+════════════════════════════════════════ -->
+<section class="hero" aria-label="Hero banner">
+  <div class="hero-grid container">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Est. 2024 — Premium Books</p>
+      <h1 class="hero-headline">Stories That Stay With You Forever</h1>
+      <p class="hero-sub">Discover bestselling novels curated for curious minds. Hand-picked titles, extraordinary stories.</p>
+      <div class="hero-cta">
+        <a href="shop.html" class="btn-primary"><i class="fas fa-book-open"></i> Shop Now</a>
+        <a href="shop.html?cat=Bestseller" class="btn-secondary">View Bestsellers</a>
+      </div>
+      <div class="hero-dots" role="tablist" aria-label="Hero slides"></div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="hero-stat-num">50K+</span><span class="hero-stat-label">Books Sold</span></div>
+        <div class="hero-stat"><span class="hero-stat-num">200+</span><span class="hero-stat-label">Authors</span></div>
+        <div class="hero-stat"><span class="hero-stat-num">4.9★</span><span class="hero-stat-label">Avg Rating</span></div>
+      </div>
+    </div>
+    <div class="hero-books" aria-hidden="true">
+      <div class="hero-book-float"><img src="https://images-na.ssl-images-amazon.com/images/P/0525559477.01.L.jpg" alt="Featured book"></div>
+      <div class="hero-book-float"><img src="https://images-na.ssl-images-amazon.com/images/P/0735211299.01.L.jpg" alt="Featured book"></div>
+      <div class="hero-book-float"><img src="https://images-na.ssl-images-amazon.com/images/P/0441013597.01.L.jpg" alt="Featured book"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SALE BANNER WITH COUNTDOWN
+════════════════════════════════════════ -->
+<section class="sale-banner" aria-label="Flash sale">
+  <div class="sale-banner-inner">
+    <h2 class="reveal">⚡ Flash Sale — Up to 40% Off</h2>
+    <p class="reveal">Curated deals on our most beloved titles. Limited time only.</p>
+    <div id="countdown" aria-live="polite" aria-label="Countdown timer"></div>
+    <a href="shop.html" class="btn-primary reveal"><i class="fas fa-bolt"></i> Shop the Sale</a>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     FEATURED BOOKS
+════════════════════════════════════════ -->
+<section class="section" aria-labelledby="featured-heading">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Handpicked</span>
+      <h2 class="section-title" id="featured-heading">Featured Books</h2>
+      <p class="section-sub">Carefully selected titles that our readers can't stop talking about</p>
+      <div class="gold-line"></div>
+    </div>
+    <div class="books-grid" id="featured-books"></div>
+    <div style="text-align:center;margin-top:48px">
+      <a href="shop.html" class="btn-secondary">View All Books <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     CATEGORIES
+════════════════════════════════════════ -->
+<section class="section" style="background:var(--bg-secondary)" aria-labelledby="cats-heading">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Explore</span>
+      <h2 class="section-title" id="cats-heading">Browse by Genre</h2>
+      <div class="gold-line"></div>
+    </div>
+    <div class="categories-grid">
+      <a href="shop.html?cat=Fiction" class="category-card reveal"><i class="fas fa-book"></i><span>Fiction</span><p class="category-count">42 titles</p></a>
+      <a href="shop.html?cat=Sci-Fi" class="category-card reveal"><i class="fas fa-rocket"></i><span>Sci-Fi</span><p class="category-count">28 titles</p></a>
+      <a href="shop.html?cat=Mystery" class="category-card reveal"><i class="fas fa-magnifying-glass"></i><span>Mystery</span><p class="category-count">35 titles</p></a>
+      <a href="shop.html?cat=Self-Help" class="category-card reveal"><i class="fas fa-brain"></i><span>Self-Help</span><p class="category-count">21 titles</p></a>
+      <a href="shop.html?cat=History" class="category-card reveal"><i class="fas fa-landmark"></i><span>History</span><p class="category-count">19 titles</p></a>
+      <a href="shop.html?cat=Biography" class="category-card reveal"><i class="fas fa-user"></i><span>Biography</span><p class="category-count">16 titles</p></a>
+      <a href="shop.html?cat=Non-Fiction" class="category-card reveal"><i class="fas fa-newspaper"></i><span>Non-Fiction</span><p class="category-count">33 titles</p></a>
+      <a href="shop.html" class="category-card reveal"><i class="fas fa-star"></i><span>All Books</span><p class="category-count">200+ titles</p></a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     BESTSELLERS CAROUSEL
+════════════════════════════════════════ -->
+<section class="section" aria-labelledby="bestsellers-heading">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Most Loved</span>
+      <h2 class="section-title" id="bestsellers-heading">Bestsellers</h2>
+      <p class="section-sub">The books our community can't stop recommending</p>
+      <div class="gold-line"></div>
+    </div>
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="bestsellers-track"></div>
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" id="carousel-prev" aria-label="Previous books"><i class="fas fa-chevron-left"></i></button>
+      <button class="carousel-btn" id="carousel-next" aria-label="Next books"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     WHY CHOOSE US
+════════════════════════════════════════ -->
+<section class="section" style="background:var(--bg-secondary)" aria-labelledby="why-heading">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">The Luminary Promise</span>
+      <h2 class="section-title" id="why-heading">Why Choose Us</h2>
+      <div class="gold-line"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px">
+      <div class="category-card reveal" style="text-align:center">
+        <i class="fas fa-truck-fast" style="font-size:2rem;color:var(--gold);margin-bottom:12px;display:block"></i>
+        <h3 style="font-size:1rem;margin-bottom:8px">Free Shipping</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary)">On all orders over $35. Delivered in 2-5 days.</p>
+      </div>
+      <div class="category-card reveal" style="text-align:center">
+        <i class="fas fa-shield-halved" style="font-size:2rem;color:var(--gold);margin-bottom:12px;display:block"></i>
+        <h3 style="font-size:1rem;margin-bottom:8px">Secure Payment</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary)">256-bit SSL encryption on all transactions.</p>
+      </div>
+      <div class="category-card reveal" style="text-align:center">
+        <i class="fas fa-rotate-left" style="font-size:2rem;color:var(--gold);margin-bottom:12px;display:block"></i>
+        <h3 style="font-size:1rem;margin-bottom:8px">Easy Returns</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary)">30-day hassle-free return policy.</p>
+      </div>
+      <div class="category-card reveal" style="text-align:center">
+        <i class="fas fa-headset" style="font-size:2rem;color:var(--gold);margin-bottom:12px;display:block"></i>
+        <h3 style="font-size:1rem;margin-bottom:8px">24/7 Support</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary)">Our team is always here to help you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════════════ -->
+<section class="section" aria-labelledby="reviews-heading">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">What Readers Say</span>
+      <h2 class="section-title" id="reviews-heading">Customer Reviews</h2>
+      <div class="gold-line"></div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Luminary Books has completely transformed my reading life. The curation is impeccable, and every book feels like a personal recommendation from a trusted friend.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">S</div>
+          <div><div class="testimonial-name">Sarah Mitchell</div><div class="testimonial-role">Book Club Organizer</div></div>
+          <div class="stars" style="margin-left:auto">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">I've been ordering from Luminary for over a year now. The packaging is gorgeous, shipping is always fast, and I've discovered so many incredible authors I never would have found otherwise.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">J</div>
+          <div><div class="testimonial-name">James Park</div><div class="testimonial-role">Literature Professor</div></div>
+          <div class="stars" style="margin-left:auto">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">The website is beautiful, the selection is outstanding, and the customer service is exceptional. This is what online book shopping should feel like.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">E</div>
+          <div><div class="testimonial-name">Emily Chen</div><div class="testimonial-role">Avid Reader & Blogger</div></div>
+          <div class="stars" style="margin-left:auto">★★★★★</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     FAQ
+════════════════════════════════════════ -->
+<section class="section" style="background:var(--bg-secondary)" aria-labelledby="faq-heading">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Help</span>
+      <h2 class="section-title" id="faq-heading">Frequently Asked Questions</h2>
+      <div class="gold-line"></div>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <button class="faq-question">How long does shipping take? <i class="fas fa-plus"></i></button>
+        <div class="faq-answer"><p>Standard shipping takes 3-5 business days. Express shipping (1-2 days) is available at checkout. Free standard shipping on all orders over $35.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question">What is your return policy? <i class="fas fa-plus"></i></button>
+        <div class="faq-answer"><p>We offer a 30-day hassle-free return policy. If you're not satisfied with your purchase, simply contact our support team and we'll arrange a return or exchange at no cost to you.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question">Do you offer eBooks? <i class="fas fa-plus"></i></button>
+        <div class="faq-answer"><p>Currently we specialize in physical books only. We believe in the tactile experience of reading a real book. eBooks may be added in the future.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question">How do coupon codes work? <i class="fas fa-plus"></i></button>
+        <div class="faq-answer"><p>Enter your coupon code in the cart page before checkout. Try code LUMINARY20 for 20% off your first order! Coupons cannot be combined with other offers.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question">Can I track my order? <i class="fas fa-plus"></i></button>
+        <div class="faq-answer"><p>Yes! Once your order ships, you'll receive an email with a tracking number. You can use this to monitor your package in real time.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     NEWSLETTER
+════════════════════════════════════════ -->
+<section class="newsletter-section" aria-labelledby="newsletter-heading">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">Stay Connected</span>
+      <h2 id="newsletter-heading">Get Reading Recommendations</h2>
+      <p>Subscribe for curated picks, exclusive discounts, and author updates. No spam, ever.</p>
+      <form class="newsletter-form" aria-label="Newsletter subscription">
+        <input type="email" placeholder="Your email address" required aria-label="Email address">
+        <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i> Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">LUMINARY <span style="font-style:italic;font-weight:400;color:var(--text-secondary)">Books</span></div>
+        <p class="footer-desc">A premium curated bookstore for readers who believe stories can change the world. Every book tells a story worth living.</p>
+        <div class="footer-socials" aria-label="Social media links">
+          <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-btn" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-heading">Shop</h3>
+        <nav class="footer-links" aria-label="Shop links">
+          <a href="shop.html">All Books</a>
+          <a href="shop.html?cat=Fiction">Fiction</a>
+          <a href="shop.html?cat=Non-Fiction">Non-Fiction</a>
+          <a href="shop.html?cat=Sci-Fi">Science Fiction</a>
+          <a href="shop.html?cat=Mystery">Mystery</a>
+        </nav>
+      </div>
+      <div>
+        <h3 class="footer-heading">Support</h3>
+        <nav class="footer-links" aria-label="Support links">
+          <a href="#">Contact Us</a>
+          <a href="#">Shipping Policy</a>
+          <a href="#">Return Policy</a>
+          <a href="#">FAQ</a>
+          <a href="#">Track Order</a>
+        </nav>
+      </div>
+      <div>
+        <h3 class="footer-heading">Contact</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary);line-height:2">
+          <i class="fas fa-location-dot" style="color:var(--gold);width:16px"></i> 123 Book Lane, NY 10001<br>
+          <i class="fas fa-envelope" style="color:var(--gold);width:16px"></i> hello@luminarybooks.com<br>
+          <i class="fas fa-phone" style="color:var(--gold);width:16px"></i> +1 (555) 123-4567<br>
+          <i class="fas fa-clock" style="color:var(--gold);width:16px"></i> Mon–Sat, 9am–6pm EST
+        </p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Luminary Books. All rights reserved.</p>
+      <div style="display:flex;gap:16px">
+        <a href="#" style="color:var(--text-muted);font-size:0.8rem">Privacy Policy</a>
+        <a href="#" style="color:var(--text-muted);font-size:0.8rem">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to top -->
+<button id="back-to-top" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+
+<script src="script.js"></script>
+</body>
+</html>
