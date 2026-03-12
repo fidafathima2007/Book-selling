@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse our full collection of premium books — Filter by genre, price, and rating.">
+  <title>Shop — Luminary Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-shop">
+
+<div id="page-loader"><div class="loader-logo">LUMINARY</div><div class="loader-bar"></div></div>
+<div id="quick-view-modal" role="dialog" aria-modal="true" aria-label="Book quick view">
+  <div class="modal-inner"><button class="modal-close" aria-label="Close"><i class="fas fa-times"></i></button><div class="modal-body"></div></div>
+</div>
+<div id="toast-container"></div>
+
+<nav class="navbar" role="navigation">
+  <a href="index.html" class="nav-logo">LUMINARY <span>Books</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html" class="active">Shop</a></li>
+    <li><a href="shop.html?cat=Fiction">Fiction</a></li>
+    <li><a href="shop.html?cat=Non-Fiction">Non-Fiction</a></li>
+    <li><a href="shop.html?cat=Sci-Fi">Sci-Fi</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button id="theme-toggle" class="nav-btn" aria-label="Toggle theme"><i class="fas fa-sun"></i></button>
+    <a href="cart.html" class="nav-btn" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-badge">0</span></a>
+    <button id="mobile-toggle" class="nav-btn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- Page Banner -->
+
+<div class="page-banner">
+  <div class="reveal"><h1>Our Collection</h1><p style="color:var(--text-secondary);margin-top:8px">Discover books that spark curiosity, inspire growth, and transport you to other worlds.</p></div>
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><span>Shop</span></nav>
+</div>
+
+<!-- Shop Section -->
+
+<section class="section">
+  <div class="container">
+    <div class="shop-layout">
+
+```
+  <!-- Filters Panel -->
+  <aside class="filters-panel" aria-label="Filter options">
+    <h2 style="font-size:1rem;margin-bottom:20px;color:var(--text-primary)"><i class="fas fa-sliders" style="color:var(--gold);margin-right:8px"></i>Filters</h2>
+
+    <!-- Search -->
+    <div class="filter-section">
+      <label class="filter-label" for="search-input">Search Books</label>
+      <div class="search-wrapper">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input type="search" class="search-input" id="search-input" placeholder="Title, author..." aria-label="Search books">
+      </div>
+    </div>
+
+    <!-- Category -->
+    <div class="filter-section">
+      <label class="filter-label" for="filter-category">Category</label>
+      <select class="filter-select" id="filter-category" aria-label="Filter by category">
+        <option value="">All Categories</option>
+      </select>
+    </div>
+
+    <!-- Price Range -->
+    <div class="filter-section">
+      <label class="filter-label">Price Range</label>
+      <div class="price-range">
+        <div class="price-inputs">
+          <span id="price-min-val">$10</span>
+          <input type="range" id="price-min" min="0" max="30" value="0" aria-label="Minimum price">
+          <input type="range" id="price-max" min="10" max="30" value="30" aria-label="Maximum price">
+          <span id="price-max-val">$30</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating -->
+    <div class="filter-section">
+      <label class="filter-label" for="filter-rating">Minimum Rating</label>
+      <select class="filter-select" id="filter-rating" aria-label="Filter by rating">
+        <option value="0">Any Rating</option>
+        <option value="3">3+ Stars</option>
+        <option value="4">4+ Stars</option>
+        <option value="4.5">4.5+ Stars</option>
+      </select>
+    </div>
+
+    <button id="reset-filters" class="btn-secondary" style="width:100%">
+      <i class="fas fa-rotate-left"></i> Reset Filters
+    </button>
+  </aside>
+
+  <!-- Books Grid -->
+  <div>
+    <div class="shop-header">
+      <p id="result-count" aria-live="polite">Loading books...</p>
+      <div class="sort-wrapper">
+        <label for="sort-select">Sort by:</label>
+        <select class="filter-select" id="sort-select" style="width:auto;min-width:180px" aria-label="Sort books">
+          <option value="default">Default</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="newest">Newest</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+    </div>
+    <div class="books-grid" id="shop-grid" role="list" aria-label="Book collection"></div>
+    <div id="pagination" role="navigation" aria-label="Pagination"></div>
+  </div>
+
+</div>
+```
+
+  </div>
+</section>
+
+<!-- Newsletter -->
+
+<section class="newsletter-section">
+  <div class="container reveal">
+    <span class="section-tag">Newsletter</span>
+    <h2>Never Miss a New Release</h2>
+    <p>Be the first to know about new arrivals and exclusive reader deals.</p>
+    <form class="newsletter-form"><input type="email" placeholder="Your email" required><button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i> Subscribe</button></form>
+  </div>
+</section>
+
+<!-- Footer -->
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">LUMINARY Books</div>
+        <p class="footer-desc">Premium curated books for curious minds.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        </div>
+      </div>
+      <div><h3 class="footer-heading">Shop</h3><nav class="footer-links"><a href="shop.html">All Books</a><a href="shop.html?cat=Fiction">Fiction</a><a href="shop.html?cat=Sci-Fi">Sci-Fi</a><a href="shop.html?cat=Mystery">Mystery</a></nav></div>
+      <div><h3 class="footer-heading">Support</h3><nav class="footer-links"><a href="#">Contact</a><a href="#">Shipping</a><a href="#">Returns</a><a href="#">FAQ</a></nav></div>
+      <div><h3 class="footer-heading">Contact</h3><p style="font-size:0.85rem;color:var(--text-secondary);line-height:2"><i class="fas fa-envelope" style="color:var(--gold);width:16px"></i> hello@luminarybooks.com<br><i class="fas fa-phone" style="color:var(--gold);width:16px"></i> +1 (555) 123-4567</p></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 Luminary Books.</p></div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+
+<script src="script.js"></script>
+
+</body>
+</html>
